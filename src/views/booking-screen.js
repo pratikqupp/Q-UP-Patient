@@ -4,44 +4,22 @@ import { Helmet } from "react-helmet";
 import axios from "axios";
 import "./booking-screen.css";
 import moment from "moment";
-import MomentUtils from "@date-io/moment";
-import ReactDatePicker from "react-datepicker";
 import DatePicker from "react-datepicker";
-
-//
-
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
 import { Box, Button, Grid } from "@mui/material";
 import { forwardRef } from "react";
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from "@material-ui/pickers";
-// import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-// import Stack from "@mui/material/Stack";
-// import dayjs from "dayjs";
+
 import dayjs from "dayjs";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { height } from "@mui/system";
-// import {
-//   KeyboardDatePicker,
-//   MuiPickersUtilsProvider,
-// } from "@material-ui/pickers";
-
-import generalCheck from "./genral-checkup";
 
 const BookingScreen = (props) => {
-  // const isBackgroundRed = true;
   var retrievedObject = localStorage.getItem("UserData");
   const history = useHistory();
 
@@ -58,11 +36,10 @@ const BookingScreen = (props) => {
     dayjs("2014-08-18T21:11:54")
   );
   const [value, setValue] = React.useState("Today");
-  // const [value, setValue] = React.useState(dayjs('2014-08-18T21:11:54'));
 
   //today select
   const [selectedData, setSelectedData] = React.useState([]);
-
+  const [isVisible, setIsVisible] = useState(false);
   const handleChange1 = (newValue) => {
     setStartDate(newValue);
     onSelectDateClick();
@@ -101,6 +78,8 @@ const BookingScreen = (props) => {
   const handleEntityClick = (event) => {
     if (event != null) {
       setDoc(event);
+      if(isVisible==false){
+      setIsVisible(!isVisible)}
       localStorage.setItem("entity", event.entityCity);
       console.log("event ", event);
       if (!event == "") {
@@ -428,7 +407,7 @@ const BookingScreen = (props) => {
                   ))}
               </header>
             </main>
-            <main className="booking-screen-main1">
+            <main style={{ display: isVisible ? 'block' : 'none' }} className="booking-screen-main1">
               <header className="booking-screen-header1">
                 {Array.isArray(queueData) &&
                   queueData.map((item, i) => (
@@ -446,11 +425,11 @@ const BookingScreen = (props) => {
                     </div>
                   ))}
               </header>
-            </main>
+           
             <Box
               value={value}
               onChange={handleChange}
-              style={{ display: "flex" }}
+              style={{ marginTop: `10px`, display: "flex" }}
             >
               <Button
                 color="success"
@@ -475,7 +454,7 @@ const BookingScreen = (props) => {
                 Tomaarow
               </Button>
               <Box
-                sx={{ width: "100px", height: "10px", borderColor: "white" }}
+                sx={{ height: "10px", borderColor: "#" }}
               >
                 <LocalizationProvider
                   dateAdapter={AdapterDayjs}
@@ -503,65 +482,64 @@ const BookingScreen = (props) => {
                 </LocalizationProvider>
               </Box>
             </Box>
-
-            {<generalCheck sData={selectedData} tSlot={timerMiniSlot} />}
-            <div>
+            </main>
+            <div style={{ display: isVisible ? 'block' : 'none' }} >
+              
               <label className="booking-screen-position2">
                 {drName + " online booking opens at " + getTimeFromSeconds(selectedData.onlineBookingStartTimeSecsFromMidnight)}
-
               </label>
-
-              {Array.isArray(timerMiniSlot) &&
-                timerMiniSlot.map((person, index) => {
-                  return (
-                    <div
-                      key={index}
-                      style={{
-                        display: "inline-flex",
-                        flexWrap: "wrap",
-                        justifyContent: "space-around",
-                      }}
-                    >
-
-
-                      <label className="booking-screen-position2">
-                        {getTimeFromSeconds(person.mainSlotOpdEndTimeSecsFromMidnight)}-
-                        {getTimeFromSeconds(person.mainSlotOpdStartTimeSecsFromMidnight)}
-                      </label>
-                      <label className="booking-screen-position2">
-                        {person.opdSlotStatusDisplayName + "\n"}
-                      </label>
-                      {person.slotDetails.map((pet, index) => {
-                        return (
-                          <div key={index}>
-                            <button
-                              style={{
-                                backgroundColor: setisBackgroundRed
-                                  ? "lightblue"
-                                  : "red",
-                              }}
-                              onClick={() =>
-                                handleBookingIdClick(pet)
-                              }
-                              className={"booking-screen-button button"}
-                            >
-                              {getTimeFromSeconds(pet.opdStartTimeSecsFromMidnight)}-
-                              {getTimeFromSeconds(pet.opdEndTimeSecsFromMidnight)}
-                              <label >
-                                {pet.opdSlotStatus}
-                              </label>
-
-
-                            </button>
-                          </div>
-                        );
-                      })}
-
-                      <hr />
-                    </div>
-                  );
-                })}
             </div>
+
+            {Array.isArray(timerMiniSlot) &&
+              timerMiniSlot.map((person, index) => {
+                return (
+                  <div
+                    key={index}
+                    style={{
+                      display: "inline-flex",
+                      flexWrap: "wrap",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <label className="booking-screen-position2">
+                      {getTimeFromSeconds(person.mainSlotOpdEndTimeSecsFromMidnight)}-
+                      {getTimeFromSeconds(person.mainSlotOpdStartTimeSecsFromMidnight)}
+                    </label>
+
+                    <label className="booking-screen-position2">
+                      {person.opdSlotStatusDisplayName + "\n"}
+                    </label>
+                    <div style={{ height:"4px" }} />
+                    {person.slotDetails.map((pet, index) => {
+                      return (
+                        <div key={index}>
+                          <button
+                            style={{
+                              backgroundColor: setisBackgroundRed
+                                ? "lightblue"
+                                : "red",
+                            }}
+                            onClick={() =>
+                              handleBookingIdClick(pet)
+                            }
+                            className={"booking-screen-button button"}
+                          >
+                            {getTimeFromSeconds(pet.opdStartTimeSecsFromMidnight)}-
+                            {getTimeFromSeconds(pet.opdEndTimeSecsFromMidnight)}
+                            <label >
+                              {pet.opdSlotStatus}
+                            </label>
+
+
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <hr />
+                  </div>
+                );
+              })}
+
           </div>
         </div>
       </section>

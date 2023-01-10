@@ -23,6 +23,7 @@ const GenralCheckup = (props) => {
   var CityName=localStorage.getItem("entity");
   var retrievedObject = localStorage.getItem("UserData");
   var patientDataretrievedObject = localStorage.getItem("PatientData");
+  const [selectionCheckupType, setSelectionCheckupType] = useState([]);
   const [generalCheckups, setGeneralCheckup] = useState([]);
   const [family, setFamily] = useState([]);
   const [familyMemberData, setFamilyMemberData] = useState({});
@@ -53,6 +54,7 @@ const GenralCheckup = (props) => {
       },
     })
       .then((responce) => {
+        setSelectionCheckupType(responce.data.checkupTypesForQueue);
         setGeneralCheckup(responce.data.checkupTypesForQueue[0]);
         console.log("checkup", responce.data.checkupTypesForQueue[0]);
         setFamily(responce.data.familyMemberList[0])
@@ -132,7 +134,7 @@ const GenralCheckup = (props) => {
       },
     })
       .then((responce) => {
-        setappBook(responce.data);
+        // setappBook(responce.data);
         console.log("responce appBook", appBook);
       })
       .catch(function (error) {
@@ -141,9 +143,13 @@ const GenralCheckup = (props) => {
           // that falls out of the range of 2xx
           // console.log(error.response.data);
           // console.log("Error api status",error.response.status);
-          console.log("ERROR", error.responce);
-          alert("Something Went Wrong Try Again");
-
+          // console.log("ERROR", error.responce);
+          // alert("Something Went Wrong Try Again");
+          if (error.response.status == 409) {
+            alert("Booking already exits");
+          }else if (error.response.status == 412) {
+            alert(" Patient bookings already full for the slot");
+          }
           // console.log(error.response.headers);
         } else if (error.request) {
           // The request was made but no response was received
@@ -165,8 +171,8 @@ const GenralCheckup = (props) => {
 
   return (
     <div>
-      {/* {Array.isArray(generalCheckups) &&
-        generalCheckups.map((item, i) => (
+       {Array.isArray(selectionCheckupType) &&
+        selectionCheckupType.map((item, i) => (
           <div key={i}
           >
             <h2>{item.name}</h2>
@@ -174,11 +180,12 @@ const GenralCheckup = (props) => {
               {item.averageCheckUpTimeInSeconds / 60} min
             </p>
           </div>
-        ))} */}
- <h2>{generalCheckups.name}</h2>
+        ))} 
+        
+ {/* <h2>{generalCheckups.name}</h2>
             <p>
               {generalCheckups.averageCheckUpTimeInSeconds / 60} min
-            </p>
+            </p> */}
 
 
       <div>
