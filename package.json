@@ -1,7 +1,7 @@
 {
   "name": "planical-modern-template",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@craco/craco": "^7.0.0-alpha.0",
     "@emotion/react": "^11.10.5",
@@ -43,6 +43,6 @@
     ]
   },
   "devDependencies": {
-    "react-scripts": "^5.0.1"
+    "react-scripts": "5.0.0"
   }
 }
