@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": false,
   "dependencies": {
-    "@craco/craco": "^7.0.0-alpha.0",
+    "@craco/craco": "^5.9.0",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@material-ui/pickers": "^3.3.10",
@@ -43,6 +43,6 @@
     ]
   },
   "devDependencies": {
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^2.1.3"
   }
 }
