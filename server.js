@@ -1,17 +1,34 @@
-//server.js
-const express = require('express');
-const favicon = require('express-favicon');
-const path = require('path');
-const port = process.env.PORT || 8080;
+const { response } = require("express");
+const express = require("express");
 const app = express();
-app.use(favicon(__dirname + '/build/favicon.ico'));
-// the __dirname is the current directory from where the script is running
-app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, 'build')));
-app.get('/ping', function (req, res) {
- return res.send('pong');
+const server = require("http").Server(app);
+const io = require("socket.io")(server);
+const { v4: uuid4 } = require("uuid");
+const { ExpressPeerServer } = require("peer");
+const peerServer = ExpressPeerServer(server, {
+  debug: true,
 });
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  res.redirect(`/${uuid4()}`);
 });
-app.listen(port);
+
+
+app.get("/:room", (req, res) => {
+  res.render("room", { roomId: req.params.room });
+});
+
+io.on("connection", (socket) => {
+  socket.on("join-room", (roomId, userId) => {
+    socket.join(roomId);
+    socket.to(roomId).broadcast.emit("user-connected", userId);
+    socket.on("message", (message) => {
+      io.to(roomId).emit("createMessage", message);
+    });
+  });
+});
+
+server.listen(process.env.PORT || 3030);
